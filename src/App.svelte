@@ -14,11 +14,43 @@
 		tags: ""
 	}
 
+	//https://gist.github.com/hyamamoto/fd435505d29ebfa3d9716fd2be8d42f0
+	function hashCode(s) {
+		return [...s].reduce(
+			(hash, c) => (Math.imul(31, hash) + c.charCodeAt(0)) | 0,
+			0
+		);
+	}
+
 	let qrCodeInput = toAndroidFormat(recipe);
+	let qrCodeHashInput = toAndroidHash(recipe);
 	$: {
 		recipe;
 		allowCompression;
 		debounce();
+	}
+
+	function toAndroidHash(recipeData) {
+		
+		let out = 17;
+
+		out = out*31 + hashCode(recipeData.name);
+		out = out*31 + hashCode(recipeData.portions + "");
+		out = out*31 + hashCode(recipeData.time);
+		for(let ingredient of recipeData.ingredients) {
+			let internHash = 17;
+
+			internHash = internHash*31 + hashCode(ingredient.name);
+			internHash = internHash*31 + hashCode(ingredient.unit);
+			internHash = internHash*31 + hashCode(ingredient.amount + "");
+
+
+			//out = out*31 + (internHash|0);	//this somehow ruins it
+		}
+		out = out*31 + hashCode(recipeData.description);
+		out = out*31 + hashCode(recipeData.directions);
+
+		return "" + (out|0);
 	}
 
 	function toAndroidFormat(recipeData) {
@@ -70,6 +102,7 @@
 		clearTimeout(timer);
 		timer = setTimeout(() => {
 			qrCodeInput = toAndroidFormat(recipe);
+			qrCodeHashInput = toAndroidHash(recipe)
 		}, 1000);
 	}
 </script>
@@ -115,6 +148,10 @@
 
 		<div class="col">
 			<QRCode bind:codeValue={ qrCodeInput } bind:useCompression={ allowCompression } squareSize=1000 />
+		</div>
+
+		<div class="col">
+			<QRCode bind:codeValue={ qrCodeHashInput } bind:useCompression={ allowCompression } squareSize=1000 />
 		</div>
 
 	</div>

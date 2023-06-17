@@ -19,9 +19,11 @@
 
     let error = "";
 
+    let ud = "" + Math.random();
+
     onMount(() => {
         loaded = true;
-        qrcode = new QRCode("qrcode", {
+        qrcode = new QRCode(ud, {
             text: codeValue,
             width: squareSize,
             height: squareSize,
@@ -70,7 +72,7 @@
     </script>
 
 <div>
-    <div class="is-center is-horizontal-align"><div id="qrcode"></div></div>
+    <div class="is-center is-horizontal-align"><div id={ud}></div></div>
     <div class="error">
         { error }
     </div>

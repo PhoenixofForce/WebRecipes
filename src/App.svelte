@@ -83,10 +83,10 @@
 	}
 
 	function textToIngredient(textIn) {
-		if(! textIn.match(/\d+ .+ .+/i)) return;
+		if(! textIn.match(/\d+(.\d+)? .+ .+/i)) return;
 
 		let parts = textIn.split(" ");
-		let amount = parseInt(parts[0]);
+		let amount = parseFloat(parts[0]);
 		let unit = parts[1];
 
 		let name = "";
